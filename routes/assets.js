@@ -34,7 +34,6 @@ const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.json');
 async function loadSavedCredentialsIfExist() {
     try {
         const content = fs.readFileSync(TOKEN_PATH);
-        console.log(content)
         const credentials = JSON.parse(content);
         return auth.fromJSON(credentials);
     } catch (err) {
@@ -50,8 +49,8 @@ async function loadSavedCredentialsIfExist() {
  */
 async function saveCredentials(client) {
     const content = fs.readFileSync(CREDENTIALS_PATH);
-    const keys = JSON.parse(content);
-    const key = keys.installed || keys.web;
+    const key = JSON.parse(content);
+    // const key = keys.installed || keys.web;
     const payload = JSON.stringify({
         type: 'authorized_user',
         client_id: key.client_id,
@@ -66,21 +65,21 @@ async function saveCredentials(client) {
  *
  */
 async function authorize() {
+    let client = await loadSavedCredentialsIfExist();
+    if (client) {
+        return client;
+    }
     const content = fs.readFileSync(CREDENTIALS_PATH);
     const credentials = JSON.parse(content);
-    const client = auth.fromJSON(credentials);
+    client = auth.fromJSON(credentials);
     client.scopes = SCOPES
-    // let client = await loadSavedCredentialsIfExist();
-    // if (client) {
-    //     return client;
-    // }
     // client = new google.auth.GoogleAuth({
     //     scopes: SCOPES,
     //     keyfilePath: CREDENTIALS_PATH,
     // });
-    // if (client.credentials) {
-    //     await saveCredentials(client);
-    // }
+    if (client.credentials) {
+        await saveCredentials(client);
+    }
     return client;
 }
 
