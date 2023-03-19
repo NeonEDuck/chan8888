@@ -5,6 +5,7 @@ import path from 'path';
 import process from 'process';
 import { authenticate } from '@google-cloud/local-auth';
 import { google } from 'googleapis';
+import { auth } from 'google-auth-library';
 
 // const ASSETS_FOLDER_PATH = './private/assets';
 const ROOT_FOLDER_ID = process.env.ROOT_FOLDER_ID;
@@ -33,8 +34,9 @@ const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.json');
 async function loadSavedCredentialsIfExist() {
     try {
         const content = fs.readFileSync(TOKEN_PATH);
+        console.log(content)
         const credentials = JSON.parse(content);
-        return google.auth.fromJSON(credentials);
+        return auth.fromJSON(credentials);
     } catch (err) {
         return null;
     }
@@ -64,17 +66,21 @@ async function saveCredentials(client) {
  *
  */
 async function authorize() {
-    let client = await loadSavedCredentialsIfExist();
-    if (client) {
-        return client;
-    }
-    client = await authenticate({
-        scopes: SCOPES,
-        keyfilePath: CREDENTIALS_PATH,
-    });
-    if (client.credentials) {
-        await saveCredentials(client);
-    }
+    const content = fs.readFileSync(CREDENTIALS_PATH);
+    const credentials = JSON.parse(content);
+    const client = auth.fromJSON(credentials);
+    client.scopes = SCOPES
+    // let client = await loadSavedCredentialsIfExist();
+    // if (client) {
+    //     return client;
+    // }
+    // client = new google.auth.GoogleAuth({
+    //     scopes: SCOPES,
+    //     keyfilePath: CREDENTIALS_PATH,
+    // });
+    // if (client.credentials) {
+    //     await saveCredentials(client);
+    // }
     return client;
 }
 
@@ -93,7 +99,7 @@ async function indexAssets(authClient) {
     // console.log('Files:');
     const index = await listFiles(authClient);
     // fs.writeFileSync(path.join('private', 'assetsIndex.json'), JSON.stringify(index));
-    console.log('Assets indexed!');
+    console.log('> Assets indexed!');
     return index;
 }
 
@@ -111,7 +117,7 @@ async function listFiles(authClient, folderId=ROOT_FOLDER_ID, folderPath='\\') {
     const files = res.data.items;
     if (files.length === 0) {
         console.log('No files found.');
-        return;
+        return {};
     }
     const fileDict = Object.assign(...await Promise.all(files.map(async (file) => {
         if (file.mimeType === 'application/vnd.google-apps.folder') {
