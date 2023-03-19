@@ -10,7 +10,7 @@ import indexRouter from './routes/index.js'
 import displayRouter from './routes/display.js'
 import assetsRouter from './routes/assets.js'
 
-const PORT = 80
+const PORT = process.env.PORT || 80
 const app = express()
 
 app.use(compression())
