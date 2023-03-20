@@ -207,6 +207,9 @@ html, body {
 .name-box[data-has-died=true] a span svg {
   fill: hsl(3, 75%, 50%);
 }
+.name-box[data-has-died=true] .name-box__alt-name {
+  color: hsl(3, 75%, 50%);
+}
 .name-box[data-has-died=false] > .name-box__died {
   display: none;
 }

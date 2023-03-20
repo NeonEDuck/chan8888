@@ -251,6 +251,9 @@ $min-name-height:  calc($min-name-length + $name-padding * 2 + $border-width * 2
                 fill: hsl(3, 75%, 50%);
             }
         }
+        .name-box__alt-name {
+            color: hsl(3, 75%, 50%);
+        }
     }
     &[data-has-died="false"] {
         > .name-box__died {
