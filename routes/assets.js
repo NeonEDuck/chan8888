@@ -153,7 +153,7 @@ async function resetAssetsIndex() {
     // console.log('> Assets indexed!');
 }
 resetAssetsIndex();
-setInterval(resetAssetsIndex, 5000);
+setInterval(resetAssetsIndex, 10000);
 
 import { Router } from 'express';
 import { Readable } from 'stream';
