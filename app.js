@@ -34,10 +34,6 @@ import assetsRouter, { resetAssetsIndex } from './routes/assets.js';
 app.use('', indexRouter);
 app.use('/display', displayRouter);
 app.use('/assets', assetsRouter);
-app.get('/reset_assets_index', async (req, res) => {
-    await resetAssetsIndex();
-    res.send('Assets index resetted!');
-});
 
 const server = http.createServer(app);
 

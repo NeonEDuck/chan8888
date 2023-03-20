@@ -90,7 +90,7 @@ async function listFiles(authClient, folderId=ROOT_FOLDER_ID, folderPath='\\') {
     });
     const files = res.data.items;
     if (files.length === 0) {
-        console.log('No files found.');
+        // console.log('No files found.');
         return {};
     }
     const fileDict = Object.assign(...await Promise.all(files.map(async (file) => {
@@ -150,9 +150,10 @@ const authClient = await authorize();
 
 async function resetAssetsIndex() {
     assetsIndex = await listFiles(authClient);
-    console.log('> Assets indexed!');
+    // console.log('> Assets indexed!');
 }
 resetAssetsIndex();
+setInterval(resetAssetsIndex, 5000);
 
 import { Router } from 'express';
 import { Readable } from 'stream';
