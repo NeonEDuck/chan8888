@@ -9,53 +9,53 @@ router.get('/', (req, res) => {
     const family = JSON.parse(fs.readFileSync('./private/family.json'));
     // res.render('index.njk')
     const formatPersonData = (person, order) => {
+        person.died     = person.died || false;
         person.bornDate = person.born || '';
-        person.died = person.died || false;
         person.diedDate = (person.died === true) ? '' : (person.died || '');
-        person.useSimplifyPosition = person.useSimplifyPosition || '';
-        person.adopted = person.adopted || false;
+        person.adopted  = person.adopted || false;
         person.divorced = person.divorced || false;
+        person.useSimplifyPosition = person.useSimplifyPosition || '';
 
         if (person.adopted) {
             if (person.gender === 'm') {
-                person.title = '養子'
+                person.title = '養子';
             }
             else if (person.gender === 'f') {
-                person.title = '養女'
+                person.title = '養女';
             }
             else if (person.gender === 'w') {
-                person.title = '媳婦'
+                person.title = '媳婦';
             }
             else if (person.gender === 'h') {
-                person.title = '女婿'
+                person.title = '女婿';
             }
         }
         else if (person.useSimplifyPosition) {
             if (person.gender === 'm') {
-                person.title = '男'
+                person.title = '男';
             }
             else if (person.gender === 'f') {
-                person.title = '女'
+                person.title = '女';
             }
             else if (person.gender === 'w') {
-                person.title = '女'
+                person.title = '女';
             }
             else if (person.gender === 'h') {
-                person.title = '男'
+                person.title = '男';
             }
         }
         else {
             if (person.gender === 'm') {
-                person.title = TITLE[order] + '男'
+                person.title = TITLE[order] + '男';
             }
             else if (person.gender === 'f') {
-                person.title = TITLE[order] + '女'
+                person.title = TITLE[order] + '女';
             }
             else if (person.gender === 'w') {
-                person.title = TITLE[order] + '媳'
+                person.title = TITLE[order] + '媳';
             }
             else if (person.gender === 'h') {
-                person.title = TITLE[order] + '婿'
+                person.title = TITLE[order] + '婿';
             }
         }
 
@@ -75,14 +75,11 @@ router.get('/', (req, res) => {
 
             const fileName = personName.substring(start+1, end);
             const filePath = `private/extra_character/${fileName}`;
-            try {
+            if (fs.existsSync(filePath)) {
                 if (fs.lstatSync(filePath).isFile()) {
                     const content = fs.readFileSync(filePath);
                     person.nameTokens.push(content);
                 }
-            }
-            catch {
-                // pass
             }
             personName = personName.substring(end+1);
         }
@@ -91,13 +88,12 @@ router.get('/', (req, res) => {
         }
     }
 
-    const recursiveFormatPersonData = (person, order, layer=0, leftPadCarry=false) => {
+    const recursiveFormatPersonData = (person, order=0, layer=0, leftPadCarry=false) => {
         const parentCount = (person.partners?.length || 0) + 1;
         const childCount = (person.children?.length || 0) + (person.children2?.length || 0);
         person.parentCount = parentCount;
         person.childCount = childCount;
-        person.leftPad = (leftPadCarry && parentCount === 2) ||
-            (parentCount === 2 && childCount === 1 && (person.children[0].partners?.length || 0) == 2)
+        person.leftPad = (leftPadCarry && parentCount === 2) || (parentCount === 2 && childCount === 1 && person.children[0].partners?.length === 2)
 
         formatPersonData(person, order);
         for (const partner of person.partners || []) {
