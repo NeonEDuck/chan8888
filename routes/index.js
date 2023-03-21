@@ -1,12 +1,14 @@
 import { Router } from 'express'
 import fs from 'fs'
+import { assetsIndex, downloadFile } from './assets.js';
 
 const router = Router();
 
 const TITLE = [ '長', '次', '三', '四', '五', '六', '七', '八', '九', '十' ];
 
-router.get('/', (req, res) => {
-    const family = JSON.parse(fs.readFileSync('./private/family.json'));
+router.get('/', async (req, res) => {
+    const fileId = Object.entries(assetsIndex).find(([key, value]) => (value === 'family.json'))[0];
+    const family = JSON.parse(Buffer.from(await downloadFile(fileId)).toString());
     // res.render('index.njk')
     const formatPersonData = (person, order, layer) => {
         person.died     = person.died || false;

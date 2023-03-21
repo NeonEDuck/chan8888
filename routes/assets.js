@@ -77,6 +77,8 @@ async function authorize() {
     return client;
 }
 
+const authClient = await authorize();
+
 /**
  * Lists the names and IDs of up to 10 files.
  * @param {OAuth2Client} authClient An authorized OAuth2 client.
@@ -109,7 +111,7 @@ async function listFiles(authClient, folderId=ROOT_FOLDER_ID, folderPath='\\') {
  * @param {string} realFileId file ID
  * @return {Promise<ArrayBuffer>} Promise of the file data
  * */
-async function downloadFile(authClient, realFileId) {
+async function downloadFile(realFileId) {
     // Get credentials and build service
     // TODO (developer) - Use appropriate auth mechanism for your app
     const service = google.drive({version: 'v2', auth: authClient});
@@ -146,13 +148,11 @@ async function downloadFile(authClient, realFileId) {
     }
 }
 
-const authClient = await authorize();
-
 async function resetAssetsIndex() {
     assetsIndex = await listFiles(authClient);
     // console.log('> Assets indexed!');
 }
-resetAssetsIndex();
+await resetAssetsIndex();
 setInterval(resetAssetsIndex, 10000);
 
 import { Router } from 'express';
@@ -163,7 +163,7 @@ const router = Router();
 
 router.get('/:fileId', async (req, res) => {
     const fileId = req.params.fileId;
-    const buffer = Buffer.from(await downloadFile(authClient, fileId));
+    const buffer = Buffer.from(await downloadFile(fileId));
 
     const stream = new Readable();
     stream._read = () => {};
@@ -177,5 +177,5 @@ router.get('/:fileId', async (req, res) => {
     stream.pipe(res);
 });
 
-export { resetAssetsIndex, assetsIndex };
+export { resetAssetsIndex, assetsIndex, downloadFile };
 export default router;
