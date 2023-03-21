@@ -36,18 +36,47 @@ html, body {
 
 .tree {
   padding: 1em;
+  display: grid;
+  grid-template-rows: auto auto;
+  grid-template-columns: auto auto;
+  grid-template-areas: "title title" "label content";
+  flex-direction: row;
+  gap: 2rem;
 }
-.tree ul {
+.tree__title {
+  grid-area: title;
+  text-align: center;
+}
+.tree__title h1 {
+  font-size: 2rem;
+}
+.tree__label-container {
+  grid-area: label;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+.tree__label-container .tree__label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  vertical-align: center;
+  font-size: 2rem;
+}
+.tree__content {
+  grid-area: content;
+}
+.tree__content ul {
   display: flex;
   flex-direction: row;
 }
-.tree ul.parents {
+.tree__content ul.parents {
   gap: 2rem;
 }
-.tree ul.parents > li:nth-child(2) {
+.tree__content ul.parents > li:nth-child(2) {
   position: relative;
 }
-.tree ul.parents > li:nth-child(2)::after {
+.tree__content ul.parents > li:nth-child(2)::after {
   content: "";
   position: absolute;
   width: 2rem;
@@ -56,11 +85,11 @@ html, body {
   left: -2rem;
   border-top: 4px solid black;
 }
-.tree ul.parents > li:nth-child(3) {
+.tree__content ul.parents > li:nth-child(3) {
   position: relative;
   order: -1;
 }
-.tree ul.parents > li:nth-child(3)::after {
+.tree__content ul.parents > li:nth-child(3)::after {
   content: "";
   position: absolute;
   width: 2rem;
@@ -69,18 +98,18 @@ html, body {
   right: -2rem;
   border-top: 4px solid black;
 }
-.tree ul.children {
+.tree__content ul.children {
   gap: 2rem;
   justify-content: center;
 }
-.tree ul.children-group {
+.tree__content ul.children-group {
   flex-direction: row-reverse;
   gap: 2rem;
 }
-.tree ul.children > li:not(:only-child) {
+.tree__content ul.children > li:not(:only-child) {
   position: relative;
 }
-.tree ul.children > li:not(:only-child)::before {
+.tree__content ul.children > li:not(:only-child)::before {
   position: absolute;
   content: "";
   width: calc(100% + 2rem);
@@ -88,26 +117,26 @@ html, body {
   border-top: 4px solid black;
   top: -2rem;
 }
-.tree ul.children > li:not(:only-child):first-child::before {
+.tree__content ul.children > li:not(:only-child):first-child::before {
   content: "";
   width: calc((100% + 2rem) / 2);
   left: 50%;
 }
-.tree ul.children > li:not(:only-child):last-child::before {
+.tree__content ul.children > li:not(:only-child):last-child::before {
   content: "";
   width: calc((100% + 2rem) / 2);
   right: 50%;
 }
-.tree ul.children > li:not(:only-child)[data-parent-count="2"]:first-child::before {
+.tree__content ul.children > li:not(:only-child)[data-parent-count="2"]:first-child::before {
   width: calc((100% + 2rem) / 2 + (1.5rem + 8px + 2rem) / 2);
   left: calc(50% - (1.5rem + 8px + 2rem) / 2);
 }
-.tree ul.children > li:not(:only-child)[data-parent-count="2"]:last-child::before {
+.tree__content ul.children > li:not(:only-child)[data-parent-count="2"]:last-child::before {
   width: calc((100% + 2rem) / 2 - (1.5rem + 8px + 2rem) / 2);
   right: calc(50% + (1.5rem + 8px + 2rem) / 2);
 }
-.tree ul.children ul.parents > li:first-child .name-box::before,
-.tree ul.children > li > .name-box:only-child::before {
+.tree__content ul.children ul.parents > li:first-child .name-box::before,
+.tree__content ul.children > li > .name-box:only-child::before {
   position: absolute;
   content: "";
   height: 2rem;
@@ -116,14 +145,14 @@ html, body {
   top: -2rem;
   left: 50%;
 }
-.tree li {
+.tree__content li {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4rem;
 }
-.tree li:not([data-child-count="0"]) > .parents > li:first-child::after {
+.tree__content li:not([data-child-count="0"]) > .parents > li:first-child::after {
   position: absolute;
   z-index: -1;
   content: "";
@@ -133,10 +162,10 @@ html, body {
   bottom: -2rem;
   left: 50%;
 }
-.tree li:not([data-child-count="0"]) > .parents[data-derive-from-second=true] > li:first-child::after {
+.tree__content li:not([data-child-count="0"]) > .parents[data-derive-from-second=true] > li:first-child::after {
   left: calc(150% + 2rem);
 }
-.tree li[data-has-child-group=true] > .parents > li:first-child::after {
+.tree__content li[data-has-child-group=true] > .parents > li:first-child::after {
   position: absolute;
   z-index: -1;
   content: "";
@@ -146,7 +175,7 @@ html, body {
   bottom: -2rem;
   left: -1rem;
 }
-.tree li[data-has-child-group=true] > .parents > li:first-child::before {
+.tree__content li[data-has-child-group=true] > .parents > li:first-child::before {
   position: absolute;
   z-index: -1;
   content: "";
@@ -156,11 +185,11 @@ html, body {
   bottom: -2rem;
   right: calc(-1rem - 4px);
 }
-.tree li[data-parent-count="2"][data-left-pad=true] > ul.parents::before, .tree li[data-parent-count="2"][data-child-count="1"] > ul.parents[data-derive-from-second] + ul.children::before {
+.tree__content li[data-parent-count="2"][data-left-pad=true] > ul.parents::before, .tree__content li[data-parent-count="2"][data-child-count="1"] > ul.parents[data-derive-from-second] + ul.children::before {
   content: "";
   width: calc(1.5rem + 8px);
 }
-.tree li[data-parent-count="2"] > .children {
+.tree__content li[data-parent-count="2"] > .children {
   justify-content: flex-start;
   min-width: 100%;
 }

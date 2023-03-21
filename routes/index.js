@@ -8,12 +8,13 @@ const TITLE = [ '長', '次', '三', '四', '五', '六', '七', '八', '九', '
 router.get('/', (req, res) => {
     const family = JSON.parse(fs.readFileSync('./private/family.json'));
     // res.render('index.njk')
-    const formatPersonData = (person, order) => {
+    const formatPersonData = (person, order, layer) => {
         person.died     = person.died || false;
         person.bornDate = person.born || '';
         person.diedDate = (person.died === true) ? '' : (person.died || '');
         person.adopted  = person.adopted || false;
         person.divorced = person.divorced || false;
+        person.layer    = layer;
         person.useSimplifyPosition = person.useSimplifyPosition || '';
 
         if (person.adopted) {
@@ -95,12 +96,12 @@ router.get('/', (req, res) => {
         person.childCount = childCount;
         person.leftPad = (leftPadCarry && parentCount === 2) || (parentCount === 2 && childCount === 1 && person.children[0].partners?.length === 2)
 
-        formatPersonData(person, order);
+        formatPersonData(person, order, layer);
         for (const partner of person.partners || []) {
             partner.gender = person.gender.replace('m', 'w').replace('f', 'h');
             partner.useSimplifyPosition = person.useSimplifyPosition;
             partner.adopted = person.adopted;
-            formatPersonData(partner, order);
+            formatPersonData(partner, order, layer);
         }
 
         if (childCount === 1) {
@@ -134,7 +135,7 @@ router.get('/', (req, res) => {
 
     recursiveFormatPersonData(family);
 
-    res.render('index', {family});
+    res.render('index', {treeTitle: '彰化縣溪州鄉西畔村 詹氏發宗親會 時字輩 渡台來夫公 派下輩序表', family});
 })
 
 export default router
