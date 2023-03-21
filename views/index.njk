@@ -19,8 +19,8 @@
                         <li>
                             <div
                                 class="name-box"
-                                data-has-died="{{'true' if data.died else 'false'}}"
-                                {{ 'data-has-divorced="true"' if data.divorced is defined and data.divorced == True else '' }}
+                                data-has-died="{{true if data.died else false}}"
+                                {{ 'data-has-divorced=true' if data.divorced else '' }}
                                 data-layer="{{ data.layer }}">
 
                                 <a href="./display?name={{data.name}}">
