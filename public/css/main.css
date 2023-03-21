@@ -37,6 +37,8 @@ html, body {
 .tree {
   padding: 1em;
   display: grid;
+  width: -moz-fit-content;
+  width: fit-content;
   grid-template-rows: auto auto;
   grid-template-columns: auto auto;
   grid-template-areas: "title title" "label content";

@@ -28,6 +28,7 @@ $min-name-height:  calc($min-name-length + $name-padding * 2 + $border-width * 2
 .tree {
     padding: 1em;
     display: grid;
+    width: fit-content;
     grid-template-rows: auto auto;
     grid-template-columns: auto auto;
     grid-template-areas: "title title" "label content";
