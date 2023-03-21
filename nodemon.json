@@ -1,0 +1,13 @@
+{
+    "restartable": "rs",
+    "ignore": [
+      ".git",
+      "node_modules/**/node_modules"
+    ],
+    "verbose": true,
+    "watch": [
+      "*.*",
+      "private/family.json"
+    ],
+    "ext": "css,js,njk"
+  }
