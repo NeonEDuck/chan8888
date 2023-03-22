@@ -305,9 +305,11 @@ html, body {
 #gallary .image {
   position: relative;
   min-height: 10em;
+  max-width: 100%;
 }
 #gallary .image img {
   max-height: 30em;
+  max-width: 100%;
   -o-object-fit: contain;
      object-fit: contain;
   background: black no-repeat scroll center center;
