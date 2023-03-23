@@ -8,7 +8,7 @@ const TITLE = [ '長', '次', '三', '四', '五', '六', '七', '八', '九', '
 
 router.get('/', async (req, res) => {
     const family = await (async () => {
-        if (process.env.USE_LOCAL_FAMILY_FILE.toLowerCase() === 'true') {
+        if (process.env.USE_LOCAL_FAMILY_FILE?.toLowerCase() === 'true') {
             if (fs.existsSync('./private/family.json')) {
                 console.log('> Using family.json in the private folder.')
                 return JSON.parse(fs.readFileSync('./private/family.json'))
