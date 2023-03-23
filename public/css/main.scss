@@ -348,6 +348,49 @@ $min-name-height:  calc($min-name-length + $name-padding * 2 + $border-width * 2
     }
 }
 
+#display-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+
+    .pdf-container {
+        position: relative;
+        max-width: 50rem;
+        width: 80%;
+        height: 75vh;
+        height: 75svh;
+        iframe {
+            width: 100%;
+            height: 100%;
+        }
+
+        &::after {
+            position: absolute;
+            content: "";
+            height: 5em;
+            width: 5em;
+            border: 0.5em solid transparent;
+            border-top: 0.5em solid gray;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: rotating 1s forwards infinite;
+            z-index: -1;
+
+            @keyframes rotating {
+                from {
+                    transform: translate(-50%, -50%) rotateZ(0deg);
+                }
+                to {
+                    transform: translate(-50%, -50%) rotateZ(360deg);
+                }
+            }
+        }
+    }
+}
+
 #gallary {
     display: flex;
     flex-direction: column;

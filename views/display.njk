@@ -9,12 +9,22 @@
 </head>
 <body>
     <main>
-        <div id="gallary">
-            {% for img in imgArray %}
-                <div class="image">
-                    <img src="/assets/{{ img }}"/>
+        <div id="display-container">
+            {% for docx in docxArray %}
+                <div class="pdf-container">
+                    <iframe src="/assets/{{ docx }}"></iframe>
                 </div>
             {% endfor %}
+
+            <h2>圖片</h2>
+
+            <div id="gallary">
+                {% for img in imgArray %}
+                    <div class="image">
+                        <img src="/assets/{{ img }}"/>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
     </main>
 </body>

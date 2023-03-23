@@ -158,12 +158,22 @@ setInterval(resetAssetsIndex, 10000);
 import { Router } from 'express';
 import { Readable } from 'stream';
 import mime from 'mime-types'
+import libre from 'libreoffice-convert';
+import util from 'util';
+libre.convertAsync = util.promisify(libre.convert);
 
 const router = Router();
 
 router.get('/:fileId', async (req, res) => {
     const fileId = req.params.fileId;
-    const buffer = Buffer.from(await downloadFile(fileId));
+    let buffer = Buffer.from(await downloadFile(fileId));
+    let contentType = mime.lookup(assetsIndex[fileId]);
+
+    // convert docx to pdf
+    if ( contentType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || contentType === 'application/msword' ) {
+        buffer = await libre.convertAsync(buffer, '.pdf', undefined);
+        contentType = 'application/pdf';
+    }
 
     const stream = new Readable();
     stream._read = () => {};
@@ -171,7 +181,7 @@ router.get('/:fileId', async (req, res) => {
     stream.push(null);
 
     res.writeHead(200, {
-        'Content-Type': mime.lookup(assetsIndex[fileId]),
+        'Content-Type': contentType,
         'Content-Length': buffer.byteLength
     });
     stream.pipe(res);
