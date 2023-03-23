@@ -61,9 +61,11 @@ html, body {
 .tree__label-container .tree__label {
   display: flex;
   justify-content: center;
-  align-items: center;
-  vertical-align: center;
+  align-items: flex-start;
+  -webkit-padding-before: 1rem;
+          padding-block-start: 1rem;
   font-size: 2rem;
+  line-height: 1em;
 }
 .tree__content {
   grid-area: content;

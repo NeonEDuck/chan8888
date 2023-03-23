@@ -50,11 +50,13 @@ $min-name-height:  calc($min-name-length + $name-padding * 2 + $border-width * 2
         gap: $vertical-gap;
 
         .tree__label {
+            $font-size: 2rem;
             display: flex;
             justify-content: center;
-            align-items: center;
-            vertical-align: center;
-            font-size: 2rem;
+            align-items: flex-start;
+            padding-block-start: calc($min-name-length - $font-size);
+            font-size: $font-size;
+            line-height: 1em;
         }
     }
 

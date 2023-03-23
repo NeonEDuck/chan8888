@@ -12,7 +12,10 @@ document.addEventListener('readystatechange', () => {
         const maxHeight =  Math.max(...nameBoxes.map((nameBox) => nameBox.clientHeight));
         treeLabel.appendChild(htmlToElement(`
             <div class="tree__label" style="height: ${maxHeight}px;"><span>(${labelArray[i]})</span></div>
-        `))
+        `));
+        nameBoxes.map(nameBox => {
+            nameBox.style.marginBlockEnd = `${maxHeight - nameBox.clientHeight}px`;
+        });
     } while (++i);
 });
 

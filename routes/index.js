@@ -7,8 +7,19 @@ const router = Router();
 const TITLE = [ '長', '次', '三', '四', '五', '六', '七', '八', '九', '十' ];
 
 router.get('/', async (req, res) => {
-    const fileId = Object.entries(assetsIndex).find(([key, value]) => (value === 'family.json'))[0];
-    const family = JSON.parse(Buffer.from(await downloadFile(fileId)).toString());
+    const family = await (async () => {
+        if (process.env.USE_LOCAL_FAMILY_FILE.toLowerCase() === 'true') {
+            if (fs.existsSync('./private/family.json')) {
+                console.log('> Using family.json in the private folder.')
+                return JSON.parse(fs.readFileSync('./private/family.json'))
+            }
+            else {
+                console.log('> Cannot find family.json in the private folder, fall back to use family.json on Google drive.')
+            }
+        }
+        const fileId = Object.entries(assetsIndex).find(([key, value]) => (value === 'family.json'))[0];
+        return JSON.parse(Buffer.from(await downloadFile(fileId)).toString());
+    })();
     // res.render('index.njk')
     const formatPersonData = (person, order, layer) => {
         person.died     = person.died || false;
