@@ -365,6 +365,23 @@ $min-name-height:  calc($min-name-length + $name-padding * 2 + $border-width * 2
             height: 100%;
         }
 
+        &::before {
+            position: absolute;
+            content: "文件讀取速度較慢";
+            top: calc(50% + 5em);
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+
+            @keyframes rotating {
+                from {
+                    transform: translate(-50%, -50%) rotateZ(0deg);
+                }
+                to {
+                    transform: translate(-50%, -50%) rotateZ(360deg);
+                }
+            }
+        }
         &::after {
             position: absolute;
             content: "";

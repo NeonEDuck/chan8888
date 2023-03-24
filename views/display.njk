@@ -12,7 +12,7 @@
         <div id="display-container">
             {% for docx in docxArray %}
                 <div class="pdf-container">
-                    <iframe src="/assets/{{ docx }}"></iframe>
+                    <iframe src="/assets/{{ docx }}" loading="lazy"></iframe>
                 </div>
             {% endfor %}
 
@@ -21,7 +21,7 @@
             <div id="gallary">
                 {% for img in imgArray %}
                     <div class="image">
-                        <img src="/assets/{{ img }}"/>
+                        <img src="/assets/{{ img }}" loading="lazy"/>
                     </div>
                 {% endfor %}
             </div>
