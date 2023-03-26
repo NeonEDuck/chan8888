@@ -8,16 +8,17 @@
 
 html, body {
     font-family: 'TW Kai', 'Noto Serif TC', 'Times New Roman', Times, serif;
-    font-size: 24px;
+    font-size: 28px;
 }
 
 [hidden] {
     display: none !important;
 }
 
-$horizontal-gap: 2rem;
+$flavor-text-width: 0.4rem;
+$horizontal-gap: $flavor-text-width * 3;
 $vertical-gap: 4rem;
-$name-padding: 0.25rem;
+$name-padding: 0rem;
 $border-width: 4px;
 $line-thickness: 4px;
 $min-name-length: 3 * 1rem;
@@ -309,7 +310,7 @@ $min-name-height:  calc($min-name-length + $name-padding * 2 + $border-width * 2
 
     &__alt-name {
         position: absolute;
-        font-size: 0.5rem;
+        font-size: $flavor-text-width;
         line-height: 1em;
         height: max-content;
         writing-mode: vertical-rl;
@@ -327,7 +328,7 @@ $min-name-height:  calc($min-name-length + $name-padding * 2 + $border-width * 2
     }
     &__born {
         position: absolute;
-        font-size: 0.5rem;
+        font-size: $flavor-text-width;
         line-height: 1em;
         height: max-content;
         writing-mode: vertical-rl;
@@ -337,7 +338,7 @@ $min-name-height:  calc($min-name-length + $name-padding * 2 + $border-width * 2
     }
     &__died {
         position: absolute;
-        font-size: 0.5rem;
+        font-size: $flavor-text-width;
         line-height: 1em;
         height: max-content;
         color: hsl(3, 75%, 50%);

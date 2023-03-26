@@ -29,10 +29,12 @@ app.engine('njk', nunjucks.render);
 
 import indexRouter from './routes/index.js';
 import displayRouter from './routes/display.js';
+import generateRouter from './routes/generate.js';
 import assetsRouter, { resetAssetsIndex } from './routes/assets.js';
 
 app.use('', indexRouter);
 app.use('/display', displayRouter);
+app.use('/generate', generateRouter);
 app.use('/assets', assetsRouter);
 
 const server = http.createServer(app);

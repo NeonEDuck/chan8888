@@ -11,70 +11,12 @@
 <body>
     <main>
         <div class="tree">
-            <div class="tree__title"><h1>{{ treeTitle }}</h1></div>
+            <div class="tree__title"><h1>彰化縣溪州鄉西畔村 詹氏發宗親會 <span>時</span>字輩 {{ rootTree.name }}公 派下{{ rootTree.chart.subsetName }}輩序表</h1></div>
             <div class="tree__label-container"></div>
             <div class="tree__content">
                 <ul>
-                    {% macro person(data) %}
-                        <li>
-                            <div
-                                class="name-box"
-                                data-has-died="{{true if data.died else false}}"
-                                {{ 'data-has-divorced=true' if data.divorced else '' }}
-                                data-layer="{{ data.layer }}">
-
-                                <a href="./display?name={{data.name}}">
-                                    {%- if data.nameTokens is defined and (data.nameTokens | length) != 1 -%}
-                                        {{ data.nameTokens | join('') }}
-                                    {%- else -%}
-                                        <span>{{ data.nameTokens[0] | safe }}</span>
-                                    {%- endif -%}
-                                </a>
-                                <span class="name-box__alt-name">{{ data.altName or '' }}</span>
-                                <span class="name-box__title">{{ data.title }}</span>
-                                <span class="name-box__born">生{{ data.bornDate }}</span>
-                                <span class="name-box__died">卒{{ data.diedDate }}</span>
-                            </div>
-                        </li>
-                    {% endmacro %}
-                    {% macro build_family(data) %}
-                        <li
-                            data-parent-count="{{ data.parentCount }}"
-                            data-child-count="{{ data.childCount }}"
-                            {{ 'data-left-pad=true' if data.leftPad else '' }}
-                            {{ 'data-has-child-group=true' if data.children2 is defined and (data.children2 | length) > 0 else '' }}
-                            >
-
-                            <ul class="parents" {{ 'data-derive-from-second=true' if (data.gender == 'f' or data.gender == 'w') and data.parentCount > 1 else '' }}>
-                                {{ person(data) }}
-                                {% for partner in data.partners or [] %}
-                                    {{ person(partner) }}
-                                {% endfor %}
-                            </ul>
-
-                            {% if ((data.children2 or []) | length) > 0 %}
-                                <ul class="children-group">
-                                    <ul class="children">
-                                        {% for child in data.children %}
-                                            {{ build_family(child) }}
-                                        {% endfor %}
-                                    </ul>
-                                    <ul class="children">
-                                        {% for child in data.children2 %}
-                                            {{ build_family(child) }}
-                                        {% endfor %}
-                                    </ul>
-                                </ul>
-                            {% elif ((data.children or []) | length) > 0 %}
-                                <ul class="children">
-                                    {% for child in data.children %}
-                                        {{ build_family(child) }}
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
-                        </li>
-                    {% endmacro %}
-                    {{ build_family(family) }}
+                    {% import "utils/chart.njk" as chart %}
+                    {{ chart.build_tree(rootTree, rootTree.chart.layer) }}
                 </ul>
             </div>
         </div>
