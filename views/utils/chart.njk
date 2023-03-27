@@ -32,6 +32,7 @@
         data-child-count="{{ data.childCount if n != 0 else 0 }}"
         {{ 'data-left-pad=true' if data.leftPad else '' }}
         {{ 'data-has-child-group=true' if data.children2 is defined and (data.children2 | length) > 0 else '' }}
+        {{ 'data-current-member=true' if data.currentMember else '' }}
         >
 
         <ul class="parents" {{ 'data-derive-from-second=true' if (data.gender == 'f' or data.gender == 'w') and data.parentCount > 1 else '' }}>

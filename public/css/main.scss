@@ -27,6 +27,7 @@ $name-width: calc(1rem + $name-padding * 2 + $border-width * 2);
 $min-name-height:  calc($min-name-length + $name-padding * 2 + $border-width * 2);
 
 .tree {
+    --horizontal-gap: #{$horizontal-gap};
     padding: 1em;
     display: grid;
     width: fit-content;
@@ -165,6 +166,16 @@ $min-name-height:  calc($min-name-length + $name-padding * 2 + $border-width * 2
             // &[data-close="true"] > .children {
             //     display: none;
             // }
+
+            &[data-current-member="true"] {
+                width: $name-width;
+                &[data-parent-count="2"] {
+                    width: calc($name-width * 2 + $horizontal-gap);
+                }
+                &[data-parent-count="3"] {
+                    width: calc($name-width * 3 + $horizontal-gap * 2);
+                }
+            }
 
             &:not([data-child-count="0"]) {
                 // &:not([data-close="true"]) {

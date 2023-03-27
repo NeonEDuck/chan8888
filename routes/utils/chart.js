@@ -35,14 +35,20 @@ async function updateChartImageOnDrive(rootTree) {
     console.log(`> all family charts on drive are updated.`);
 }
 
+
+if (process.env.USE_LOCAL_FAMILY_FILE?.toLowerCase() === 'true') {
+    if (fs.existsSync('./private/family.json')) {
+        console.log('> Using family.json in the private folder.');
+    }
+    else {
+        console.log('> Cannot find family.json in the private folder, fall back to use family.json on Google drive.');
+    }
+}
+
 export async function loadRawFamilyJson() {
     if (process.env.USE_LOCAL_FAMILY_FILE?.toLowerCase() === 'true') {
         if (fs.existsSync('./private/family.json')) {
-            console.log('> Using family.json in the private folder.')
             return JSON.parse(fs.readFileSync('./private/family.json'))
-        }
-        else {
-            console.log('> Cannot find family.json in the private folder, fall back to use family.json on Google drive.')
         }
     }
     const [fileId, fileInfo] = Object.entries(assetsIndex).find(([key, {title}]) => (title === 'family.json'));
@@ -198,16 +204,18 @@ export function searchChartedTreesInTree(tree, precedent) {
             precedentCopy.chart = tree.chart
             precedentCopy.children = precedent.children?.map((child) => {
                 if (child.name === tree.name) {
-                    return tree;
+                    const t = Object.assign({}, tree);
+                    t.currentMember = true;
+                    return t;
                 }
                 return shallowCopyWithoutChildren(child);
             });
-            precedentCopy.children2 = precedent.children2?.map((child) => {
-                if (child.name === tree.name) {
-                    return tree;
-                }
-                return shallowCopyWithoutChildren(child);
-            });
+            // precedentCopy.children2 = precedent.children2?.map((child) => {
+            //     if (child.name === tree.name) {
+            //         return tree;
+            //     }
+            //     return shallowCopyWithoutChildren(child);
+            // });
 
             result.push(precedentCopy);
         }

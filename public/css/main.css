@@ -36,6 +36,7 @@ html, body {
 }
 
 .tree {
+  --horizontal-gap: 1.2rem;
   padding: 1em;
   display: grid;
   width: -moz-fit-content;
@@ -156,6 +157,15 @@ html, body {
   flex-direction: column;
   align-items: center;
   gap: 4rem;
+}
+.tree__content li[data-current-member=true] {
+  width: calc(1rem + 8px);
+}
+.tree__content li[data-current-member=true][data-parent-count="2"] {
+  width: calc((1rem + 8px) * 2 + 1.2rem);
+}
+.tree__content li[data-current-member=true][data-parent-count="3"] {
+  width: calc((1rem + 8px) * 3 + 2.4rem);
 }
 .tree__content li:not([data-child-count="0"]) > .parents > li:first-child::after {
   position: absolute;
