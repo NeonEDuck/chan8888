@@ -19,7 +19,7 @@ export async function loadRawFamilyJson() {
 
 export function formatMemberData(member, order, layer) {
     member.died     ??= false;
-    member.bornDate ??= '';
+    member.bornDate = member.born ?? '';
     member.diedDate = (member.died === true) ? '' : (member.died || '');
     member.adopted  ??= false;
     member.divorced ??= false;
