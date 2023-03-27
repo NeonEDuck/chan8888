@@ -6,7 +6,7 @@
             {{ 'data-has-divorced=true' if data.divorced else '' }}
             data-layer="{{ data.layer }}">
 
-            <a href="./display?name={{data.name}}">
+            <a href="./display?name={{data.name}}{{',' + data.altName if data.altName is defined}}">
                 {%- if data.nameTokens is defined and (data.nameTokens | length) != 1 -%}
                     {%- if data.nameStyle is defined -%}
                         {%- for token in data.nameTokens -%}
