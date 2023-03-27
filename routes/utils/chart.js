@@ -1,10 +1,39 @@
 import fs from 'fs';
-import { assetsIndex, downloadFile } from '../assets.js';
+import { assetsIndex, uploadFile, downloadFile } from '../assets.js';
+import puppeteer from 'puppeteer';
 
 const TITLE = [ '長', '次', '三', '四', '五', '六', '七', '八', '九', '十' ];
 
 let familyJsonVersion;
 let familyJsonCache;
+
+async function updateChartImageOnDrive(rootTree) {
+    if (!process.env.CHART_FOLDER_ID) {
+        return;
+    }
+    console.log(`> updating family charts on drive.`);
+
+    rootTree ??= await loadRawFamilyJson();
+    const trees = searchChartedTreesInTree(rootTree);
+
+    const browser = await puppeteer.launch();
+
+    await Promise.all(trees.map(async (tree) => {
+        const page = await browser.newPage();
+        await page.goto(`http://localhost?name=${tree.chart.name}`, {waitUntil: 'networkidle0'});
+        await page.setViewport({
+            width: 960,
+            height: 760,
+            deviceScaleFactor: 2,
+        });
+        const buffer = await page.screenshot({fullPage: true});
+        await page.close();
+        await uploadFile(buffer, `${tree.chart.name}.png`, process.env.CHART_FOLDER_ID);
+    }));
+
+    await browser.close();
+    console.log(`> all family charts on drive are updated.`);
+}
 
 export async function loadRawFamilyJson() {
     if (process.env.USE_LOCAL_FAMILY_FILE?.toLowerCase() === 'true') {
@@ -19,10 +48,12 @@ export async function loadRawFamilyJson() {
     const [fileId, fileInfo] = Object.entries(assetsIndex).find(([key, {title}]) => (title === 'family.json'));
     if (familyJsonVersion !== fileInfo.version) {
         console.log(`> fetch version ${fileInfo.version} of family.json.`);
-        familyJsonCache = Buffer.from(await downloadFile(fileId)).toString();
+        familyJsonCache = JSON.parse(Buffer.from(await downloadFile(fileId)).toString());
         familyJsonVersion = fileInfo.version;
+
+        updateChartImageOnDrive(familyJsonCache);
     }
-    return JSON.parse(familyJsonCache);
+    return familyJsonCache
 }
 
 export function formatMemberData(member, order, layer) {

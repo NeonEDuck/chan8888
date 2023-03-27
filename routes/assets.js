@@ -2,7 +2,9 @@ import dotenv from 'dotenv'
 dotenv.config();
 import fs from 'fs'
 import path from 'path';
+import mime from 'mime-types';
 import process from 'process';
+import { Readable } from 'stream';
 import { google } from 'googleapis';
 import { auth } from 'google-auth-library';
 
@@ -148,6 +150,42 @@ async function downloadFile(realFileId) {
     }
 }
 
+export async function uploadFile(buffer, fileName, folderId) {
+    const service = google.drive({version: 'v2', auth: authClient});
+
+    try {
+        const files = await listFiles(authClient, folderId);
+        const [fileId] = Object.entries(files).find(([fileId, {title}]) => title === fileName) || [];
+        if (fileId) {
+            await service.files.update({
+                fileId,
+                media: {
+                    body: Readable.from(buffer),
+                },
+            })
+        }
+        else {
+            await service.files.insert({
+                requestBody: {
+                    title: fileName,
+                    mimeType: mime.lookup(fileName),
+                    parents: [{id: folderId}],
+                },
+                media: {
+                    mimeType: mime.lookup(fileName),
+                    body: Readable.from(buffer),
+                },
+            });
+        }
+        console.log(`> ${fileName} uploaded to drive.`)
+    } catch (err) {
+        console.error(err);
+        console.log(`> something went wrong when uploading ${fileName}.`)
+        // TODO(developer) - Handle error
+        throw err;
+    }
+}
+
 async function resetAssetsIndex() {
     assetsIndex = await listFiles(authClient);
     // console.log('> Assets indexed!');
@@ -156,8 +194,6 @@ await resetAssetsIndex();
 setInterval(resetAssetsIndex, 10000);
 
 import { Router } from 'express';
-import { Readable } from 'stream';
-import mime from 'mime-types'
 import libre from 'libreoffice-convert';
 import util from 'util';
 libre.convertAsync = util.promisify(libre.convert);
