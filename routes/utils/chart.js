@@ -3,6 +3,9 @@ import { assetsIndex, downloadFile } from '../assets.js';
 
 const TITLE = [ '長', '次', '三', '四', '五', '六', '七', '八', '九', '十' ];
 
+let familyJsonVersion;
+let familyJsonCache;
+
 export async function loadRawFamilyJson() {
     if (process.env.USE_LOCAL_FAMILY_FILE?.toLowerCase() === 'true') {
         if (fs.existsSync('./private/family.json')) {
@@ -13,8 +16,13 @@ export async function loadRawFamilyJson() {
             console.log('> Cannot find family.json in the private folder, fall back to use family.json on Google drive.')
         }
     }
-    const fileId = Object.entries(assetsIndex).find(([key, value]) => (value === 'family.json'))[0];
-    return JSON.parse(Buffer.from(await downloadFile(fileId)).toString());
+    const [fileId, fileInfo] = Object.entries(assetsIndex).find(([key, {title}]) => (title === 'family.json'));
+    if (familyJsonVersion !== fileInfo.version) {
+        console.log(`> fetch version ${fileInfo.version} of family.json.`);
+        familyJsonCache = Buffer.from(await downloadFile(fileId)).toString();
+        familyJsonVersion = fileInfo.version;
+    }
+    return JSON.parse(familyJsonCache);
 }
 
 export function formatMemberData(member, order, layer) {

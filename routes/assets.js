@@ -100,7 +100,7 @@ async function listFiles(authClient, folderId=ROOT_FOLDER_ID, folderPath='\\') {
             return listFiles(authClient, file.id, file.title);
         }
 
-        return {[file.id]: file.title};
+        return {[file.id]: {title: file.title, version: file.version}};
     })));
     return fileDict;
 }
@@ -167,7 +167,7 @@ const router = Router();
 router.get('/:fileId', async (req, res) => {
     const fileId = req.params.fileId;
     let buffer = Buffer.from(await downloadFile(fileId));
-    let contentType = mime.lookup(assetsIndex[fileId]);
+    let contentType = mime.lookup(assetsIndex[fileId].title);
 
     // convert docx to pdf
     if ( contentType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || contentType === 'application/msword' ) {
