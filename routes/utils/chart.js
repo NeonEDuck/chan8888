@@ -5,7 +5,6 @@ import puppeteer from 'puppeteer';
 const TITLE = [ '長', '次', '三', '四', '五', '六', '七', '八', '九', '十' ];
 
 let familyJsonVersion;
-let familyJsonCache;
 
 async function updateChartImageOnDrive(rootTree) {
     if (!process.env.CHART_FOLDER_ID) {
@@ -16,20 +15,39 @@ async function updateChartImageOnDrive(rootTree) {
     rootTree ??= await loadRawFamilyJson();
     const trees = searchChartedTreesInTree(rootTree);
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
 
-    await Promise.all(trees.map(async (tree) => {
-        const page = await browser.newPage();
-        await page.goto(`http://localhost?name=${tree.chart.name}`, {waitUntil: 'networkidle0'});
-        await page.setViewport({
-            width: 960,
-            height: 760,
-            deviceScaleFactor: 2,
-        });
-        const buffer = await page.screenshot({fullPage: true});
-        await page.close();
-        await uploadFile(buffer, `${tree.chart.name}.png`, process.env.CHART_FOLDER_ID);
-    }));
+    if (process.env.LOW_MEMORY_MODE?.toLowerCase() === 'true') {
+        for (const tree of trees) {
+            const page = await browser.newPage();
+            await page.goto(`http://localhost:${process.env.PORT ?? 80}?name=${tree.chart.name}`, {waitUntil: 'networkidle0'});
+            await page.setViewport({
+                width: 960,
+                height: 760,
+                deviceScaleFactor: 2,
+            });
+            const buffer = await page.screenshot({fullPage: true});
+            await page.close();
+            await uploadFile(buffer, `${tree.chart.name}.png`, process.env.CHART_FOLDER_ID);
+        }
+    }
+    else {
+        await Promise.all(trees.map(async (tree) => {
+            const page = await browser.newPage();
+            await page.goto(`http://localhost?name=${tree.chart.name}`, {waitUntil: 'networkidle0'});
+            await page.setViewport({
+                width: 960,
+                height: 760,
+                deviceScaleFactor: 2,
+            });
+            const buffer = await page.screenshot({fullPage: true});
+            await page.close();
+            await uploadFile(buffer, `${tree.chart.name}.png`, process.env.CHART_FOLDER_ID);
+        }));
+    }
+
 
     await browser.close();
     console.log(`> all family charts on drive are updated.`);
@@ -52,14 +70,22 @@ export async function loadRawFamilyJson() {
         }
     }
     const [fileId, fileInfo] = Object.entries(assetsIndex).find(([key, {title}]) => (title === 'family.json'));
+    let familyJsonCache;
     if (familyJsonVersion !== fileInfo.version) {
         console.log(`> fetch version ${fileInfo.version} of family.json.`);
-        familyJsonCache = JSON.parse(Buffer.from(await downloadFile(fileId)).toString());
+        familyJsonCache = Buffer.from(await downloadFile(fileId)).toString();
+        if (fs.existsSync('private/generated')) {
+            fs.mkdirSync('private/generated', {recursive: true});
+        }
+        fs.writeFileSync('private/generated/family.json', Buffer.from(await downloadFile(fileId)).toString());
         familyJsonVersion = fileInfo.version;
 
-        updateChartImageOnDrive(familyJsonCache);
+        // updateChartImageOnDrive(familyJsonCache);
     }
-    return familyJsonCache
+    else {
+        familyJsonCache = fs.readFileSync('private/generated/family.json');
+    }
+    return JSON.parse(familyJsonCache);
 }
 
 export function formatMemberData(member, order, layer) {
